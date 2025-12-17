@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List View</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F7FAFC;
+            color: #1C1C1C;
+        }
+
+        /* Custom Scrollbar for cleaner look if needed */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .form-checkbox {
+            appearance: none;
+            background-color: #fff;
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.15em;
+            height: 1.15em;
+            border: 1px solid #BDC4CD;
+            border-radius: 0.25em;
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+        }
+
+        .form-checkbox::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em white;
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+            background-color: white;
+        }
+
+        .form-checkbox:checked {
+            background-color: #0D6EFD;
+            border-color: #0D6EFD;
+        }
+
+        .form-checkbox:checked::before {
+            transform: scale(1);
+        }
+
+        .form-radio {
+            appearance: none;
+            background-color: #fff;
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.15em;
+            height: 1.15em;
+            border: 1px solid #BDC4CD;
+            border-radius: 50%;
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+        }
+
+        .form-radio::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            background-color: #0D6EFD;
+        }
+
+        .form-radio:checked {
+            border-color: #0D6EFD;
+        }
+
+        .form-radio:checked::before {
+            transform: scale(1);
+        }
+
+        /* Range Slider Custom Styling */
+        .range-track {
+            height: 4px;
+            background: #E0E0E0;
+            border-radius: 2px;
+            position: relative;
+            width: 100%;
+        }
+
+        .range-fill {
+            height: 4px;
+            background: #0D6EFD;
+            border-radius: 2px;
+            position: absolute;
+            left: 20%;
+            right: 20%;
+        }
+
+        .range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border: 1px solid #E0E0E0;
+            /* Looks like light border in screenshot */
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .range-thumb.left {
+            left: 20%;
+        }
+
+        .range-thumb.right {
+            right: 20%;
+        }
+    </style>
+</head>
+
+<body class="bg-[#F7FAFC]">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <!-- Top Section -->
+        <div class="container mx-auto max-w-[1180px] px-4 py-5 flex items-center justify-between gap-8">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2 flex-shrink-0">
+                <div class="w-10 h-10 bg-[#0D6EFD] rounded-lg flex items-center justify-center text-white text-xl">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                </div>
+                <span class="text-[#0D6EFD] text-2xl font-bold tracking-tight">Brand</span>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="flex-grow max-w-[660px]">
+                <div class="flex border border-[#0D6EFD] rounded-md overflow-hidden h-10">
+                    <input type="text" placeholder="Search" class="flex-grow px-4 outline-none text-sm text-gray-700">
+                    <div class="border-l border-[#0D6EFD] relative">
+                        <select
+                            class="h-full px-4 pr-8 bg-white text-sm text-gray-700 outline-none appearance-none cursor-pointer hover:bg-gray-50">
+                            <option>All category</option>
+                            <option>Electronics</option>
+                            <option>Clothes</option>
+                        </select>
+                        <i
+                            class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+                    </div>
+                    <button
+                        class="bg-[#0D6EFD] text-white px-6 text-sm font-medium hover:bg-blue-700 transition">Search</button>
+                </div>
+            </div>
+
+            <!-- User Actions -->
+            <div class="flex items-center gap-6 flex-shrink-0">
+                <a href="#" class="flex flex-col items-center gap-1 text-gray-500 hover:text-gray-800">
+                    <i class="fa-solid fa-user text-lg"></i>
+                    <span class="text-xs text-[#8B96A5]">Profile</span>
+                </a>
+                <a href="#" class="flex flex-col items-center gap-1 text-gray-500 hover:text-gray-800">
+                    <i class="fa-solid fa-message text-lg"></i>
+                    <span class="text-xs text-[#8B96A5]">Message</span>
+                </a>
+                <a href="#" class="flex flex-col items-center gap-1 text-gray-500 hover:text-gray-800">
+                    <i class="fa-solid fa-heart text-lg"></i>
+                    <span class="text-xs text-[#8B96A5]">Orders</span>
+                </a>
+                <a href="#" class="flex flex-col items-center gap-1 text-gray-500 hover:text-gray-800">
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    <span class="text-xs text-[#8B96A5]">My cart</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="border-t border-gray-200">
+            <div class="container mx-auto max-w-[1180px] px-4 h-12 flex items-center justify-between">
+                <!-- Left Nav -->
+                <div class="flex items-center gap-6 text-sm font-medium text-gray-800">
+                    <a href="#" class="flex items-center gap-2 hover:text-blue-600">
+                        <i class="fa-solid fa-bars"></i>
+                        All category
+                    </a>
+                    <a href="#" class="hover:text-blue-600">Hot offers</a>
+                    <a href="#" class="hover:text-blue-600">Gift boxes</a>
+                    <a href="#" class="hover:text-blue-600">Projects</a>
+                    <a href="#" class="hover:text-blue-600">Menu item</a>
+                    <a href="#" class="flex items-center gap-1 hover:text-blue-600">
+                        Help
+                        <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
+                    </a>
+                </div>
+
+                <!-- Right Nav -->
+                <div class="flex items-center gap-6 text-sm font-medium text-gray-800">
+                    <a href="#" class="flex items-center gap-1 hover:text-blue-600">
+                        English, USD
+                        <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
+                    </a>
+                    <a href="#" class="flex items-center gap-2 hover:text-blue-600">
+                        Ship to
+                        <img src="https://flagcdn.com/w20/de.png" alt="Germany" class="h-4 w-auto">
+                        <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumbs -->
+    <div class="container mx-auto max-w-[1180px] px-4 py-5">
+        <nav class="text-sm text-[#8B96A5] flex items-center gap-2">
+            <a href="#" class="hover:text-gray-800">Home</a>
+            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            <a href="#" class="hover:text-gray-800">Clothings</a>
+            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            <a href="#" class="hover:text-gray-800">Men's wear</a>
+            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            <span class="text-[#8B96A5]">Summer clothing</span>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto max-w-[1180px] px-4 pb-12">
+        <div class="grid grid-cols-[240px_1fr] gap-7">
+
+            <!-- Sidebar Filters -->
+            <aside class="flex flex-col gap-0">
+
+                <!-- Category -->
+                <div class="border-t border-gray-200 py-4 first:border-t-0 first:pt-0">
+                    <div class="flex justify-between items-center mb-3 cursor-pointer">
+                        <h3 class="font-semibold text-[#1C1C1C]">Category</h3>
+                        <i class="fa-solid fa-chevron-up text-gray-500 text-xs"></i>
+                    </div>
+                    <ul class="space-y-2 text-[#505050]">
+                        <li><a href="#" class="hover:text-blue-600 block">Mobile accessory</a></li>
+                        <li><a href="#" class="hover:text-blue-600 block">Electronics</a></li>
+                        <li><a href="#" class="hover:text-blue-600 block">Smartphones</a></li>
+                        <li><a href="#" class="hover:text-blue-600 block">Modern tech</a></li>
+                        <li><a href="#" class="text-[#0D6EFD] text-sm mt-1 block">See all</a></li>
+                    </ul>
+                </div>
+
+                <!-- Brands -->
+                <div class="border-t border-gray-200 py-4">
+                    <div class="flex justify-between items-center mb-3 cursor-pointer">
+                        <h3 class="font-semibold text-[#1C1C1C]">Brands</h3>
+                        <i class="fa-solid fa-chevron-up text-gray-500 text-xs"></i>
+                    </div>
+                    <div class="space-y-2.5">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" class="form-checkbox">
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">Samsung</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" class="form-checkbox">
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">Apple</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" class="form-checkbox">
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">Huawei</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" class="form-checkbox">
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">Pocco</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" class="form-checkbox">
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">Lenovo</span>
+                        </label>
+                        <a href="#" class="text-[#0D6EFD] text-sm block mt-1">See all</a>
+                    </div>
+                </div>
+
+                <!-- Features -->
+                <div class="border-t border-gray-200 py-4">
+                    <div class="flex justify-between items-center mb-3 cursor-pointer">
+                        <h3 class="font-semibold text-[#1C1C1C]">Features</h3>
+                        <i class="fa-solid fa-chevron-up text-gray-500 text-xs"></i>
+                    </div>
+                    <div class="space-y-2.5">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" class="form-checkbox">
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">Metallic</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" class="form-checkbox">
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">Plastic cover</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" class="form-checkbox">
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">8GB Ram</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" class="form-checkbox">
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">Super power</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" class="form-checkbox">
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">Large Memory</span>
+                        </label>
+                        <a href="#" class="text-[#0D6EFD] text-sm block mt-1">See all</a>
+                    </div>
+                </div>
+
+                <!-- Price range -->
+                <div class="border-t border-gray-200 py-4">
+                    <div class="flex justify-between items-center mb-4 cursor-pointer">
+                        <h3 class="font-semibold text-[#1C1C1C]">Price range</h3>
+                        <i class="fa-solid fa-chevron-up text-gray-500 text-xs"></i>
+                    </div>
+
+                    <!-- Slider Visual -->
+                    <div class="mb-4 px-1">
+                        <div class="range-track">
+                            <div class="range-fill"></div>
+                            <div class="range-thumb left"></div>
+                            <div class="range-thumb right"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="flex flex-col gap-1 w-full">
+                            <label class="text-xs text-[#1C1C1C]">Min</label>
+                            <input type="text" placeholder="0"
+                                class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm outline-none focus:border-blue-500">
+                        </div>
+                        <div class="flex flex-col gap-1 w-full">
+                            <label class="text-xs text-[#1C1C1C]">Max</label>
+                            <input type="text" placeholder="999999"
+                                class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                    <button
+                        class="w-full bg-white border border-gray-200 text-[#0D6EFD] font-medium py-1.5 rounded shadow-sm hover:bg-gray-50 transition">Apply</button>
+                </div>
+
+                <!-- Condition -->
+                <div class="border-t border-gray-200 py-4">
+                    <div class="flex justify-between items-center mb-3 cursor-pointer">
+                        <h3 class="font-semibold text-[#1C1C1C]">Condition</h3>
+                        <i class="fa-solid fa-chevron-up text-gray-500 text-xs"></i>
+                    </div>
+                    <div class="space-y-2.5">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="radio" name="condition" class="form-radio" checked>
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">Any</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="radio" name="condition" class="form-radio">
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">Refurbished</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="radio" name="condition" class="form-radio">
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">Brand new</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="radio" name="condition" class="form-radio">
+                            <span class="text-[#1C1C1C] group-hover:text-blue-600">Old items</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Ratings -->
+                <div class="border-t border-gray-200 py-4">
+                    <div class="flex justify-between items-center mb-3 cursor-pointer">
+                        <h3 class="font-semibold text-[#1C1C1C]">Ratings</h3>
+                        <i class="fa-solid fa-chevron-up text-gray-500 text-xs"></i>
+                    </div>
+                    <div class="space-y-2.5">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" class="form-checkbox">
+                            <div class="flex text-[#FF9017] text-sm gap-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" class="form-checkbox">
+                            <div class="flex text-[#FF9017] text-sm gap-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-regular fa-star text-[#D5D5D5]"></i>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" class="form-checkbox">
+                            <div class="flex text-[#FF9017] text-sm gap-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-regular fa-star text-[#D5D5D5]"></i>
+                                <i class="fa-regular fa-star text-[#D5D5D5]"></i>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" class="form-checkbox">
+                            <div class="flex text-[#FF9017] text-sm gap-1">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-regular fa-star text-[#D5D5D5]"></i>
+                                <i class="fa-regular fa-star text-[#D5D5D5]"></i>
+                                <i class="fa-regular fa-star text-[#D5D5D5]"></i>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+            </aside>
+
+            <!-- Product List Content -->
+            <main>
+                <!-- Top Bar -->
+                <div class="bg-white border border-gray-200 rounded-md p-3 mb-5 flex justify-between items-center">
+                    <div class="text-[#1C1C1C]">
+                        12,911 items in <span class="font-semibold">Mobile accessory</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" class="form-checkbox" checked>
+                            <span class="text-[#1C1C1C]">Verified only</span>
+                        </label>
+
+                        <div
+                            class="relative border border-gray-300 rounded px-3 py-1.5 bg-white flex items-center gap-2 cursor-pointer hover:border-gray-400">
+                            <span class="text-[#1C1C1C]">Featured</span>
+                            <i class="fa-solid fa-chevron-down text-gray-500 text-xs"></i>
+                        </div>
+
+                        <div class="flex border border-gray-300 rounded overflow-hidden">
+                            <button class="p-2 bg-gray-100 text-[#1C1C1C] hover:bg-gray-200">
+                                <i class="fa-solid fa-border-all"></i>
+                            </button>
+                            <button class="p-2 bg-white text-gray-500 hover:bg-gray-50 border-l border-gray-300">
+                                <i class="fa-solid fa-bars"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Cards -->
+                <div class="flex flex-col gap-4">
+
+                    <!-- Card 1 -->
+                    <div
+                        class="bg-white border border-gray-200 rounded-md p-5 flex gap-5 hover:shadow-md transition-shadow relative">
+                        <div class="w-[200px] h-[180px] flex-shrink-0 flex items-center justify-center">
+                            <img src="./images/listview1.png" alt="Product"
+                                class="max-w-full max-h-full object-contain">
+                        </div>
+                        <div class="flex-grow pt-1">
+                            <div class="flex justify-between items-start">
+                                <h2 class="text-[#1C1C1C] font-medium text-base mb-2">Canon Cmera EOS 2000, Black 10x
+                                    zoom</h2>
+                                <button
+                                    class="w-9 h-9 border border-gray-200 rounded-md flex items-center justify-center text-[#0D6EFD] hover:bg-blue-50 transition">
+                                    <i class="fa-regular fa-heart"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-[#1C1C1C] font-bold text-xl">$998.00</span>
+                                <span class="text-[#8B96A5] text-sm line-through">$1128.00</span>
+                            </div>
+                            <div class="flex items-center gap-3 mb-3 text-sm">
+                                <div class="flex items-center gap-1">
+                                    <div class="flex text-[#FF9017] text-xs">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                    </div>
+                                    <span class="text-[#FF9017]">7.5</span>
+                                </div>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span class="text-[#8B96A5]">154 orders</span>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span class="text-[#00B517]">Free Shipping</span>
+                            </div>
+                            <p class="text-[#505050] text-sm leading-6 mb-2 pr-10">
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua
+                            </p>
+                            <a href="#" class="text-[#0D6EFD] font-medium text-sm hover:underline">View details</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div
+                        class="bg-white border border-gray-200 rounded-md p-5 flex gap-5 hover:shadow-md transition-shadow relative">
+                        <div class="w-[200px] h-[180px] flex-shrink-0 flex items-center justify-center">
+                            <img src="./images/listview2.png" alt="Product"
+                                class="max-w-full max-h-full object-contain">
+                        </div>
+                        <div class="flex-grow pt-1">
+                            <div class="flex justify-between items-start">
+                                <h2 class="text-[#1C1C1C] font-medium text-base mb-2">GoPro HERO6 4K Action Camera -
+                                    Black</h2>
+                                <button
+                                    class="w-9 h-9 border border-gray-200 rounded-md flex items-center justify-center text-[#0D6EFD] hover:bg-blue-50 transition">
+                                    <i class="fa-regular fa-heart"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-[#1C1C1C] font-bold text-xl">$998.00</span>
+                            </div>
+                            <div class="flex items-center gap-3 mb-3 text-sm">
+                                <div class="flex items-center gap-1">
+                                    <div class="flex text-[#FF9017] text-xs">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                    </div>
+                                    <span class="text-[#FF9017]">7.5</span>
+                                </div>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span class="text-[#8B96A5]">154 orders</span>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span class="text-[#00B517]">Free Shipping</span>
+                            </div>
+                            <p class="text-[#505050] text-sm leading-6 mb-2 pr-10">
+                                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                                commodo consequat. Duis aute irure dolor in reprehenderit
+                            </p>
+                            <a href="#" class="text-[#0D6EFD] font-medium text-sm hover:underline">View details</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div
+                        class="bg-white border border-gray-200 rounded-md p-5 flex gap-5 hover:shadow-md transition-shadow relative">
+                        <div class="w-[200px] h-[180px] flex-shrink-0 flex items-center justify-center">
+                            <img src="./images/listview3.png" alt="Product"
+                                class="max-w-full max-h-full object-contain">
+                        </div>
+                        <div class="flex-grow pt-1">
+                            <div class="flex justify-between items-start">
+                                <h2 class="text-[#1C1C1C] font-medium text-base mb-2">GoPro HERO6 4K Action Camera -
+                                    Black</h2>
+                                <button
+                                    class="w-9 h-9 border border-gray-200 rounded-md flex items-center justify-center text-[#0D6EFD] hover:bg-blue-50 transition">
+                                    <i class="fa-regular fa-heart"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-[#1C1C1C] font-bold text-xl">$998.00</span>
+                            </div>
+                            <div class="flex items-center gap-3 mb-3 text-sm">
+                                <div class="flex items-center gap-1">
+                                    <div class="flex text-[#FF9017] text-xs">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                    </div>
+                                    <span class="text-[#FF9017]">7.5</span>
+                                </div>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span class="text-[#8B96A5]">154 orders</span>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span class="text-[#00B517]">Free Shipping</span>
+                            </div>
+                            <p class="text-[#505050] text-sm leading-6 mb-2 pr-10">
+                                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                                commodo consequat. Duis aute irure dolor in reprehenderit
+                            </p>
+                            <a href="#" class="text-[#0D6EFD] font-medium text-sm hover:underline">View details</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div
+                        class="bg-white border border-gray-200 rounded-md p-5 flex gap-5 hover:shadow-md transition-shadow relative">
+                        <div class="w-[200px] h-[180px] flex-shrink-0 flex items-center justify-center">
+                            <img src="./images/listview4.png" alt="Product"
+                                class="max-w-full max-h-full object-contain">
+                        </div>
+                        <div class="flex-grow pt-1">
+                            <div class="flex justify-between items-start">
+                                <h2 class="text-[#1C1C1C] font-medium text-base mb-2">GoPro HERO6 4K Action Camera -
+                                    Black</h2>
+                                <button
+                                    class="w-9 h-9 border border-gray-200 rounded-md flex items-center justify-center text-[#0D6EFD] hover:bg-blue-50 transition">
+                                    <i class="fa-regular fa-heart"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-[#1C1C1C] font-bold text-xl">$998.00</span>
+                            </div>
+                            <div class="flex items-center gap-3 mb-3 text-sm">
+                                <div class="flex items-center gap-1">
+                                    <div class="flex text-[#FF9017] text-xs">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                    </div>
+                                    <span class="text-[#FF9017]">7.5</span>
+                                </div>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span class="text-[#8B96A5]">154 orders</span>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span class="text-[#00B517]">Free Shipping</span>
+                            </div>
+                            <p class="text-[#505050] text-sm leading-6 mb-2 pr-10">
+                                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                                commodo consequat. Duis aute irure dolor in reprehenderit
+                            </p>
+                            <a href="#" class="text-[#0D6EFD] font-medium text-sm hover:underline">View details</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div
+                        class="bg-white border border-gray-200 rounded-md p-5 flex gap-5 hover:shadow-md transition-shadow relative">
+                        <div class="w-[200px] h-[180px] flex-shrink-0 flex items-center justify-center">
+                            <img src="./images/listview5.png" alt="Product"
+                                class="max-w-full max-h-full object-contain rounded-full">
+                        </div>
+                        <div class="flex-grow pt-1">
+                            <div class="flex justify-between items-start">
+                                <h2 class="text-[#1C1C1C] font-medium text-base mb-2">GoPro HERO6 4K Action Camera -
+                                    Black</h2>
+                                <button
+                                    class="w-9 h-9 border border-gray-200 rounded-md flex items-center justify-center text-[#0D6EFD] hover:bg-blue-50 transition">
+                                    <i class="fa-regular fa-heart"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-[#1C1C1C] font-bold text-xl">$998.00</span>
+                                <span class="text-[#8B96A5] text-sm line-through">$1128.00</span>
+                            </div>
+                            <div class="flex items-center gap-3 mb-3 text-sm">
+                                <div class="flex items-center gap-1">
+                                    <div class="flex text-[#FF9017] text-xs">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                    </div>
+                                    <span class="text-[#FF9017]">7.5</span>
+                                </div>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span class="text-[#8B96A5]">154 orders</span>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span class="text-[#00B517]">Free Shipping</span>
+                            </div>
+                            <p class="text-[#505050] text-sm leading-6 mb-2 pr-10">
+                                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                                commodo consequat. Duis aute irure dolor in reprehenderit
+                            </p>
+                            <a href="#" class="text-[#0D6EFD] font-medium text-sm hover:underline">View details</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div
+                        class="bg-white border border-gray-200 rounded-md p-5 flex gap-5 hover:shadow-md transition-shadow relative">
+                        <div class="w-[200px] h-[180px] flex-shrink-0 flex items-center justify-center">
+                            <img src="./images/listview6.png" alt="Product"
+                                class="max-w-full max-h-full object-contain">
+                        </div>
+                        <div class="flex-grow pt-1">
+                            <div class="flex justify-between items-start">
+                                <h2 class="text-[#1C1C1C] font-medium text-base mb-2">GoPro HERO6 4K Action Camera -
+                                    Black</h2>
+                                <button
+                                    class="w-9 h-9 border border-gray-200 rounded-md flex items-center justify-center text-[#0D6EFD] hover:bg-blue-50 transition">
+                                    <i class="fa-regular fa-heart"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-[#1C1C1C] font-bold text-xl">$998.00</span>
+                            </div>
+                            <div class="flex items-center gap-3 mb-3 text-sm">
+                                <div class="flex items-center gap-1">
+                                    <div class="flex text-[#FF9017] text-xs">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                    </div>
+                                    <span class="text-[#FF9017]">7.5</span>
+                                </div>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span class="text-[#8B96A5]">154 orders</span>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span class="text-[#00B517]">Free Shipping</span>
+                            </div>
+                            <p class="text-[#505050] text-sm leading-6 mb-2 pr-10">
+                                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                                commodo consequat. Duis aute irure dolor in reprehenderit
+                            </p>
+                            <a href="#" class="text-[#0D6EFD] font-medium text-sm hover:underline">View details</a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex justify-end items-center gap-2 mt-6">
+                    <div class="relative border border-gray-300 rounded bg-white">
+                        <select
+                            class="appearance-none bg-transparent pl-3 pr-8 py-1.5 text-sm text-[#1C1C1C] outline-none cursor-pointer">
+                            <option>Show 10</option>
+                            <option>Show 20</option>
+                        </select>
+                        <i
+                            class="fa-solid fa-chevron-down absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs pointer-events-none"></i>
+                    </div>
+
+                    <div class="flex border border-gray-300 rounded bg-white">
+                        <button
+                            class="w-9 h-9 flex items-center justify-center border-r border-gray-300 text-gray-500 hover:bg-gray-50">
+                            <i class="fa-solid fa-chevron-left text-xs"></i>
+                        </button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center border-r border-gray-300 text-[#1C1C1C] bg-gray-100 font-medium">1</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center border-r border-gray-300 text-[#1C1C1C] hover:bg-gray-50">2</button>
+                        <button
+                            class="w-9 h-9 flex items-center justify-center border-r border-gray-300 text-[#1C1C1C] hover:bg-gray-50">3</button>
+                        <button class="w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-50">
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white pt-12 pb-6 mt-10">
+        <div class="max-w-[1180px] mx-auto px-4">
+            <!-- use flex instead of grid so last column stays on same row -->
+            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 mb-12">
+
+                <!-- Brand Column -->
+                <div class="lg:w-[32%]">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center text-white text-sm">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                        </div>
+                        <span class="text-xl font-bold text-blue-500">Brand</span>
+                    </div>
+                    <p class="text-gray-500 text-sm mb-4 leading-relaxed pr-4">
+                        Best information about the company gies here but now lorem ipsum is
+                    </p>
+                    <div class="flex gap-2">
+                        <a href="#"
+                            class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center hover:bg-gray-400 transition"><i
+                                class="fa-brands fa-facebook-f text-sm"></i></a>
+                        <a href="#"
+                            class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center hover:bg-gray-400 transition"><i
+                                class="fa-brands fa-twitter text-sm"></i></a>
+                        <a href="#"
+                            class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center hover:bg-gray-400 transition"><i
+                                class="fa-brands fa-linkedin-in text-sm"></i></a>
+                        <a href="#"
+                            class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center hover:bg-gray-400 transition"><i
+                                class="fa-brands fa-instagram text-sm"></i></a>
+                        <a href="#"
+                            class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center hover:bg-gray-400 transition"><i
+                                class="fa-brands fa-youtube text-sm"></i></a>
+                    </div>
+                </div>
+
+                <!-- Middle link columns -->
+                <div class="flex flex-1 flex-wrap gap-8">
+                    <div class="min-w-[120px]">
+                        <h4 class="font-medium text-gray-800 mb-3">About</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#" class="hover:text-blue-600">About Us</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Find store</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Categories</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Blogs</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="min-w-[120px]">
+                        <h4 class="font-medium text-gray-800 mb-3">Partnership</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#" class="hover:text-blue-600">About Us</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Find store</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Categories</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Blogs</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="min-w-[120px]">
+                        <h4 class="font-medium text-gray-800 mb-3">Information</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#" class="hover:text-blue-600">Help Center</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Money Refund</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Shipping</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Contact us</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="min-w-[120px]">
+                        <h4 class="font-medium text-gray-800 mb-3">For users</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#" class="hover:text-blue-600">Login</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Register</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Settings</a></li>
+                            <li><a href="#" class="hover:text-blue-600">My Orders</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Get App Column -->
+                <div class="w-full sm:w-auto">
+                    <h4 class="font-medium text-gray-800 mb-3">Get app</h4>
+                    <div class="flex flex-col gap-3">
+                        <a href="#" class="bg-black text-white rounded px-3 py-2 flex items-center gap-2 w-[140px]">
+                            <i class="fa-brands fa-apple text-2xl"></i>
+                            <div class="flex flex-col leading-none">
+                                <span class="text-[8px]">Download on the</span>
+                                <span class="text-xs font-semibold">App Store</span>
+                            </div>
+                        </a>
+                        <a href="#" class="bg-black text-white rounded px-3 py-2 flex items-center gap-2 w-[140px]">
+                            <i class="fa-brands fa-google-play text-xl"></i>
+                            <div class="flex flex-col leading-none">
+                                <span class="text-[8px]">GET IT ON</span>
+                                <span class="text-xs font-semibold">Google Play</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="bg-gray-100 py-4">
+            <div class="max-w-[1180px] mx-auto px-4 flex justify-between items-center">
+                <p class="text-gray-500 text-sm">© 2023 Ecommerce.</p>
+                <div class="flex items-center gap-2 text-gray-600 text-sm cursor-pointer">
+                    <img src="https://placehold.co/20x14/d9534f/fff?text= " class="rounded-sm border border-gray-300">
+                    <span>English</span>
+                    <i class="fa-solid fa-chevron-up text-xs"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
